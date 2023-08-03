@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\Covid19_Vaccination_Infogate_MVC.props" />
+</Project>

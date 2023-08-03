@@ -1,0 +1,232 @@
+﻿@{
+    Layout = "_LayoutFeaturePage";
+}
+@using Covid19_Vaccination_Infogate_MVC.Models
+@using Covid19_Vaccination_Infogate_MVC.Helpers
+@using System.IO;
+@using Newtonsoft.Json;
+@{
+    Citizen citizen = SessionHelper.GetObjectFromJson<Citizen>(Context.Session, "CitizenProfile");
+}
+<link rel="stylesheet" href="/css/CitizenProfile.css">
+<script src="/js/CitizenProfile.js"></script>
+<div class="holder-function-panel">
+    <!-- MENU -->
+    @{
+        @await Component.InvokeAsync("ViewFunctionMenu");
+    }
+    <!-- END MENU -->
+    <!-- FUNCTIONAL PANEL -->
+    <div class="function-panel">
+        <br>
+        <div class="panel-target-citizen">
+            <p>Đối tượng: </p>
+            <select name="" id="">
+                <option value=""> @citizen.FullName() </option>
+            </select>
+        </div>
+        <br>
+
+        <div class="info-panel" id="info-panel">
+            <div class="row row1">
+                <div>
+                    <label for="lastname">Họ và tên đệm</label><br>
+                    <input type="text" name="lastname" required value="@citizen.LastName"><br>
+                    <hr>
+                    <div class="message msg1"></div>
+                </div>
+
+                <div>
+                    <label for="firstname">Tên <span>(*)</span></label><br>
+                    <input type="text" name="firstname" required value="@citizen.FirstName"><br>
+                    <hr>
+                    <div class="message msg2"></div>
+                </div>
+
+                <div>
+                    <label for="gender">Giới tính <span>(*)</span></label><br>
+                    <select name="gender" id="select-gender">
+                        @{
+                            switch (citizen.Gender())
+                            {
+                                case "Nữ":
+                                    <option value="0">Nữ</option>
+                                    <option value="1">Nam</option>
+                                    <option value="2">Khác</option>
+                                    break;
+                                case "Nam":
+                                    <option value="1">Nam</option>
+                                    <option value="0">Nữ</option>
+                                    <option value="2">Khác</option>
+                                    break;
+                                case "Khác":
+                                    <option value="2">Khác</option>
+                                    <option value="0">Nữ</option>
+                                    <option value="1">Nam</option>
+                                    break;
+                            }
+                        }
+                    </select>
+                    <hr>
+                    <div class="message msg3"></div>
+                </div>
+            </div>
+
+            <div class="row row2">
+                <div>
+                    <label for="id">Mã định danh <span>(*)</span></label><br>
+                    <input type="text" name="id" required value="@citizen.Id"><br>
+                    <hr>
+                    <div class="message msg4"></div>
+                </div>
+
+                <div>
+                    <label for="birthday">Ngày tháng năm sinh <span>(*)</span></label><br>
+                    <input type="date" name="birthday" required value="@citizen.Birthday"><br>
+                    <hr>
+                    <div class="message msg5"></div>
+                </div>
+
+                <div>
+                    <label for="hometown">Quê quán <span>(*)</span></label><br>
+                    <select name="hometown" id="select-hometown">
+                        <option value="">@citizen.ProvinceName</option>
+                        @{
+                            LocalProvince[] province = null;
+
+                            int hometowncode = -1;
+
+                            using (StreamReader r = new StreamReader(@Url.Content("wwwroot/local.json")))
+                            {
+                                string json = r.ReadToEnd();
+                                province = JsonConvert.DeserializeObject<LocalProvince[]>(json);
+                            }
+                            int i = 0;
+                            for (i = 0; i < 63; i++)
+                                if (province[i].Name != citizen.ProvinceName)
+                                {
+                                    <option value="@i">@province[i].Name</option>
+                                    continue;
+                                }
+                                else
+                                    hometowncode = i;
+                            <script>
+                                    $("#select-province option:first-child").val('@hometowncode')
+                            </script>
+                        }
+                    </select>
+                    <hr>
+                    <div class="message msg6"></div>
+                </div>
+            </div>
+
+            <p>Địa chỉ thường trú:</p>
+
+            <div class="row row3">
+                <div>
+                    <label for="city">Tỉnh/Thành phố <span>(*)</span></label><br>
+                    <select name="city" id="select-province">
+                        <option value="">@citizen.ProvinceName</option>
+                        @{
+                            LocalDistrict[] district = null;
+                            LocalTown[] town = null;
+                            int provincecode = -1;
+                            int districtcode = -1;
+                            int towncode = -1;
+
+                            i = 0;
+                            for (i = 0; i < 63; i++)
+                                if (province[i].Name != citizen.ProvinceName)
+                                {
+                                    <option value="@i">@province[i].Name</option>
+                                    continue;
+                                }
+                                else
+                                    provincecode = i;
+                            <script>
+                                    $("#select-province option:first-child").val('@provincecode')
+                            </script>
+                        }
+                    </select>
+                    <hr>
+                    <div class="message msg7"></div>
+                </div>
+
+                <div>
+                    <label for="district">Quận/Huyện <span>(*)</span></label><br>
+            <select name="district" id="select-district">
+                <option value="">@citizen.DistrictName</option>
+                @{
+                    i = 0;
+                    district = province[provincecode].Districts;
+                    while (i < district.Length)
+                    {
+                        if (district[i].Name != citizen.DistrictName)
+                        {
+                            <option value="@i">@district[i].Name</option>
+                        }
+                        else
+                        {
+                            districtcode = i;
+                        }
+                        i++;
+                    }
+                    <script>
+                        $("#select-district option:first-child").val('@districtcode')
+                    </script>
+                }
+            </select>
+                    <hr>
+                    <div class="message msg8"></div>
+                </div>
+
+                <div>
+                    <label for="town">Xã/Phường/Thị trấn <span>(*)</span></label><br>
+                <select name="town" id="select-town">
+                    <option value="">@citizen.TownName</option>';
+                    @{
+                        i = 0;
+                        town = district[districtcode].Wards;
+                        while (i < town.Length)
+                        {
+                            if (town[i].Name != citizen.TownName)
+                            {
+                                <option value="@i">@town[i].Name</option>
+                            }
+                            else
+                                towncode = i;
+                            i++;
+                        }
+                        <script>
+                                $("#select-town option:first-child").val('@towncode')
+                        </script>
+                    }
+                </select>
+                    <hr>
+                    <div class="message msg9"></div>
+                </div>
+            </div>
+
+            <div class="row row4">
+                <label for="street">Số nhà, tên đường, khu phố/ấp</label><br>
+                <input type="text" name="street" required value="@citizen.Street"><br>
+                <hr>
+                <div class="message msg10"></div>
+            </div>
+
+            <div class="row row5">
+                <label for="email">Email</label><br>
+                <input type="text" name="email" required value="@citizen.Email"><br>
+                <hr>
+                <div class="message msg11"></div>
+            </div>
+
+            <div class="group_btn">
+                <button class="btn-medium-filled" id="update-profile">Cập nhật</button>
+                <button class="btn-medium-bordered" id="cancel-update-profile">Hủy bỏ</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<br>

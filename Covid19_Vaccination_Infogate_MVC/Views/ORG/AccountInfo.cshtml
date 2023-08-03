@@ -1,0 +1,67 @@
+﻿@{
+    Layout = "_LayoutFeaturePage";
+}
+@using Covid19_Vaccination_Infogate_MVC.Models
+@using Covid19_Vaccination_Infogate_MVC.Helpers
+@using System.Web;
+@{
+    Account account = SessionHelper.GetObjectFromJson<Account>(Context.Session, "AccountInfo");
+}
+<link rel="stylesheet" href="~/css/CitizenAccountInfo.css">
+<script src="~/js/ORGAccountInfo.js"></script>
+<script src="~/js/ORGAccountUpdate.js"></script>
+ 
+<div class="holder-function-panel">
+    <!-- MENU -->
+    @{
+        @await Component.InvokeAsync("ViewFunctionMenu");
+    }
+    <!-- END MENU -->
+    <!-- FUNCTIONAL PANEL -->
+    <div class="function-panel">
+        <div class="accinfo-panel">
+            <div class="frame">
+                <div class="account">
+                    <br>
+                    <p>Tài khoản</p>
+                    <br>
+                    <label for="id">Mã đơn vị tiêm chủng</label><br>
+                    <input type="text" name="id" required value="@account.Username" disabled><br>
+                    <hr>
+                    <div class="message msg1"></div>
+                    <br>
+
+                    <label for="password">Nhập mật khẩu hiện tại</label><br>
+                    <input type="password" name="password" required value=""><br>
+                    <hr>
+                    <div class="message msg2"></div>
+                </div>
+            </div>
+
+            <div class="frame">
+                <div class="change-pass">
+                    <br>
+                    <p>Đổi mật khẩu</p>
+                    <br>
+                    <label for="new-password">Mật khẩu mới</label><br>
+                    <input type="password" name="new-password" required value=""><br>
+                    <hr>
+                    <div class="message msg1"></div>
+                    <br>
+
+                    <label for="repeat-new-password">Nhập mật khẩu mới</label><br>
+                    <input type="password" name="repeat-new-password" required value=""><br>
+                    <hr>
+                    <div class="message msg2"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="group_btn">
+            <button class="btn-medium-filled" id="update-account-info">Cập nhật</button>
+            <button class="btn-medium-bordered" id="cancel-update-account-info">Hủy bỏ</button>
+        </div>
+    </div>
+</div>
+
+<br>

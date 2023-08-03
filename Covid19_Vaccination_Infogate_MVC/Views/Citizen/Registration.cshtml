@@ -1,0 +1,81 @@
+﻿@{
+    Layout = "_LayoutFeaturePage";
+}
+@using Covid19_Vaccination_Infogate_MVC.Models
+@using Covid19_Vaccination_Infogate_MVC.Helpers
+@using System.Web;
+@{
+    Citizen citizen = SessionHelper.GetObjectFromJson<Citizen>(Context.Session, "CitizenProfile");
+}
+<link rel="stylesheet" href="/css/CitizenRegistration.css">
+<script src="/js/CitizenRegistration.js"></script>
+
+<div class="holder-function-panel">
+    <!-- MENU -->
+    @{
+        @await Component.InvokeAsync("ViewFunctionMenu");
+    }
+    <!-- END MENU -->
+
+    <div class="function-panel">
+        <br>
+        <div class="panel-target-citizen">
+            <p>Đối tượng: </p>
+            <select name="" id="">
+                <option value="">@citizen.FullName()</option>
+            </select>
+        </div>
+        <br>
+        <div class="filter-panel">
+            <div class="filter-pane" id="filter-vaccine-time">
+                <label for="status">Trạng thái</label>
+                <select type="text" name="status" id="status">
+                    <option value="-1">Tất cả</option>
+                    <option value="0">Đã đăng ký</option>
+                    <option value="1">Đã điểm danh</option>
+                    <option value="2">Đã tiêm</option>
+                    <option value="3">Đã hủy</option>
+                </select>
+
+                <label for="vaccine">Vaccine</label>
+                <select type="text" name="vaccine" id="vaccine">
+                    <option value="-1">Tất cả</option>
+                    <option value="Astra">AstraZeneca</option>
+                    <option value="Comirnaty">Comirnaty (Pfizer)</option>
+                    <option value="Mordena">Mordena</option>
+                    <option value="Vero">Vero Cell</option>
+                    <option value="Sputnik">Sputnik V</option>
+                </select>
+
+                <label for="time">Buổi</label>
+                <select type="drop-down" name="time" id="time">
+                    <option value="-1">Tất cả</option>
+                    <option value="0">Sáng</option>
+                    <option value="1">Chiều</option>
+                    <option value="2">Tối</option>
+                </select>
+
+                <button class="btn-medium-bordered-icon btn-filter" id="btn-filter-registration">
+                    <img src="/image/filter-magnifier.png" alt="filter-magnifier">
+                    Tìm kiếm
+                </button>
+            </div>
+        </div>
+        <br>
+
+        <div class="panel-list-registration">
+            <div class="list-name">DANH CÁC LƯỢT ĐĂNG KÝ TIÊM CHỦNG</div>
+            <br>
+            <div class="holder">
+                <div class="list-registration" id="list-registration">
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+</div>
+<!-- END FUNCTION PANEL -->
+<br>
+<br>

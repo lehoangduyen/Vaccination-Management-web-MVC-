@@ -1,0 +1,53 @@
+﻿@{
+    Layout = "_LayoutFeaturePage";
+}
+@using Covid19_Vaccination_Infogate_MVC.Models
+@using Covid19_Vaccination_Infogate_MVC.Helpers
+@using System.Web;
+@{
+    Citizen citizen = SessionHelper.GetObjectFromJson<Citizen>(Context.Session, "CitizenProfile");
+}
+<link rel="stylesheet" href="/css/MedicalFormList.css">
+<script src="/js/MedicalFormList.js"></script>
+
+<!-- FUNCTION PANEL -->
+<div class="holder-function-panel">
+    <!-- MENU -->
+    @{
+        @await Component.InvokeAsync("ViewFunctionMenu");
+    }
+    <!-- END MENU -->
+
+    <div class="function-panel">
+        <br>
+        <div class="panel-target-citizen">
+            <p>Đối tượng: </p>
+            <select name="" id="">
+                <option value="@citizen.Id">@citizen.FullName()</option>
+            </select>
+        </div>
+        <br>
+
+        <div class="filter-panel-medical" id="filter-form_list">
+            <div class="select-date">
+                <label for="form-date">Tờ khai trong vòng:</label>
+                <select type="text" name="form-date" id="form-date">
+                    <option value=7>7 ngày</option>
+                    <option value=15>15 ngày</option>
+                    <option value=30>30 ngày</option>
+                    <option value=60>60 ngày</option>
+                </select>
+            </div>
+            <button class="btn-medium-bordered-icon btn-filter" id="btn-filter-org">
+                Tìm kiếm
+            </button>
+        </div>
+
+        <div class="panel-list" id="panel-list">
+            <div class="holder-form-medical" id="holder-form-medical">
+            </div>
+        </div>
+
+    </div>
+</div>
+<!-- END FUNCTION PANEL -->

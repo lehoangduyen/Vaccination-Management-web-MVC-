@@ -1,0 +1,138 @@
+﻿@{
+    Layout = "_LayoutFeaturePage";
+}
+@using Covid19_Vaccination_Infogate_MVC.Models
+@using Covid19_Vaccination_Infogate_MVC.Helpers
+@using System.IO;
+@using Newtonsoft.Json;
+@{
+    Citizen citizen = SessionHelper.GetObjectFromJson<Citizen>(Context.Session, "CitizenProfile");
+}
+<link rel="stylesheet" href="/css/CitizenVaccination.css">
+<script src="/js/CitizenVaccination.js"></script>
+
+<!-- FUNCTION PANEL -->
+<div class="holder-function-panel">
+    <div class="function-panel">
+        <br>
+        <div class="filter-panel">
+            <div class="filter-pane" id="filter-org">
+                <label for="province-name">Tỉnh/Thành phố</label>
+                <select type="text" name="province-name" id="select-province">
+                    <option value="">@citizen.ProvinceName</option>
+                    @{
+                        LocalProvince[] province = null;
+                        LocalDistrict[] district = null;
+                        LocalTown[] town = null;
+                        int provincecode = -1;
+                        int districtcode = -1;
+                        int towncode = -1;
+
+                        using (StreamReader r = new StreamReader(@Url.Content("wwwroot/local.json")))
+                        {
+                            string json = r.ReadToEnd();
+                            province = JsonConvert.DeserializeObject<LocalProvince[]>(json);
+                        }
+                        int i = 0;
+                        for (i = 0; i < 63; i++)
+                            if (province[i].Name != citizen.ProvinceName)
+                            {
+                                <option value="@i">@province[i].Name</option>
+                                continue;
+                            }
+                            else
+                                provincecode = i;
+                        <script>
+                                    $("#select-province option:first-child").val('@provincecode')
+                        </script>
+                    }
+                </select>
+                <label for="district-name">Quận/Huyện/Thị xã</label>
+                <select type="text" name="district-name" id="select-district">
+                    <option value="">@citizen.DistrictName</option>
+                    @{
+                        i = 0;
+                        district = province[provincecode].Districts;
+                        while (i < district.Length)
+                        {
+                            if (district[i].Name != citizen.DistrictName)
+                            {
+                                <option value="@i">@district[i].Name</option>
+                            }
+                            else
+                                districtcode = i;
+                            i++;
+                        }
+                        <script>
+                                    $("#select-district option:first-child").val('@districtcode')
+                        </script>
+                    }
+                </select>
+
+                <label for="town-name">Xã/Phường/Thị trấn</label>
+                <select type="drop-down" name="town-name" id="select-town">
+                    <option value="">@citizen.TownName</option>
+                    @{
+                        i = 0;
+                        town = district[districtcode].Wards;
+                        while (i < town.Length)
+                        {
+                            if (town[i].Name != citizen.TownName)
+                            {
+                                <option value="@i">@town[i].Name</option>
+                            }
+                            else
+                                towncode = i;
+                            i++;
+                        }
+                        <script>
+                                $("#select-town option:first-child").val('@towncode')
+                        </script>
+                    }
+                </select>
+                <button class="btn-medium-bordered-icon btn-filter" id="btn-filter-org">
+                    Tìm kiếm
+                </button>
+            </div>
+
+
+            <div class="filter-pane" id="filter-schedule">
+                <label for="start-date">Từ ngày</label>
+                <input type="date" name="start-date" id="start-date">
+
+                <label for="end-date">Đến ngày</label>
+                <input type="date" name="end-date" id="end-date">
+
+                <label for="vaccine">Vaccine</label>
+                <select type="text" name="vaccine" id="vaccine">
+                    <option value="">Tất cả</option>
+                    <option value="Astra">AstraZeneca</option>
+                    <option value="Corminaty">Corminaty (Pfizer)</option>
+                    <option value="Sputnik">Sputnik V</option>
+                    <option value="Vero">Verro Cell</option>
+                    <option value="Moderna">Moderna</option>
+                </select>
+            </div>
+        </div>
+
+        <br>
+
+        <div class="panel-list">
+            <div class="list-name">
+                <div class="organization" id="list-name-org">Danh sách bệnh viện</div>
+                <div class="schedule" id="list-name-schedule">Danh sách lịch tiêm</div>
+            </div>
+            <br>
+
+            <div class="holder">
+                <div class="list-object list-org" id="list-org">
+                </div>
+
+                <div class="list-object list-schedule" id="list-schedule">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END FUNCTION PANEL -->
+<br>

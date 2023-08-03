@@ -1,0 +1,145 @@
+﻿@{
+    Layout = "_LayoutFeaturePage";
+}
+@using Covid19_Vaccination_Infogate_MVC.Models
+@using Covid19_Vaccination_Infogate_MVC.Helpers
+@using System.IO;
+@using Newtonsoft.Json;
+@{
+    Account account = SessionHelper.GetObjectFromJson<Account>(Context.Session, "AccountInfo");
+    Organization org = SessionHelper.GetObjectFromJson<Organization>(Context.Session, "ORGProfile");
+}
+<link rel="stylesheet" href="/css/ORGProfile.css">
+<script src="/js/ORGProfile.js"></script>
+
+<div class="holder-function-panel">
+    <!-- MENU -->
+    @{
+        @await Component.InvokeAsync("ViewFunctionMenu");
+    }
+    <!-- END MENU -->
+    <!-- FUNCTIONAL PANEL -->
+    <div class="function-panel">
+        <br>
+        <div class="panel-target-citizen">
+            <!-- <p>Đối tượng: </p> -->
+            <p class="">Đơn vị: @org.Name</p>
+        </div>
+        <br>
+
+        <div class="info-panel" id="info-panel">
+            <div class="row row1">
+                <div>
+                    <label for="id">Mã đơn vị tiêm chủng <span>(*)</span></label><br>
+                    <input type="text" name="id" required value="@org.Id" disabled><br>
+                    <hr>
+                </div>
+
+                <div class="item_name">
+                    <label for="name">Tên đơn vị tiêm chủng <span>(*)</span></label><br>
+                    <input type="text" name="name" required value="@org.Name"><br>
+                    <hr>
+                </div>
+            </div>
+
+            <div class="row row2">
+                <div>
+                    <label for="city">Tỉnh/Thành phố <span>(*)</span></label><br>
+                <select name="city" id="select-province" disabled>
+                    <option value="">@org.ProvinceName</option>
+                    @{
+                            LocalProvince[] province = null;
+                            LocalDistrict[] district = null;
+                            LocalTown[] town = null;
+                            int provincecode = -1;
+                            int districtcode = -1;
+                            int towncode = -1;
+
+                            using (StreamReader r = new StreamReader(@Url.Content("wwwroot/local.json")))
+                            {
+                            string json = r.ReadToEnd();
+                            province = JsonConvert.DeserializeObject<LocalProvince[]>(json);
+                        }
+                        int i = 0;
+                        for (i = 0; i < 63; i++)
+                            if (province[i].Name != org.ProvinceName)
+                            {
+                                <option value="@i">@province[i].Name</option>
+                                continue;
+                            }
+                            else
+                                provincecode = i;
+                        <script>
+                            $("#select-province option:first-child").val('@provincecode')
+                        </script>
+                        }
+                </select>
+                    <hr>
+                </div>
+
+                <div>
+                    <label for="district">Quận/Huyện <span>(*)</span></label><br>
+                <select name="district" id="select-district">
+                    <option value="">@org.DistrictName</option>
+                    @{
+                        i = 0;
+                        district = province[provincecode].Districts;
+                        while (i < district.Length)
+                        {
+                            if (district[i].Name != org.DistrictName)
+                            {
+                                <option value="@i">@district[i].Name</option>
+                            }
+                            else
+                                districtcode = i;
+                            i++;
+                        }
+                        <script>
+                            $("#select-district option:first-child").val('@districtcode')
+                        </script>
+                    }
+                </select>
+                    <hr>
+                </div>
+
+                <div>
+                    <label for="town">Xã/Phường/Thị trấn <span>(*)</span></label><br>
+                    <select name="town" id="select-town">
+                        <option value="">@org.TownName</option>';
+                        @{
+                            i = 0;
+                            town = district[districtcode].Wards;
+                            while (i < town.Length)
+                            {
+                                if (town[i].Name != org.TownName)
+                                {
+                                    <option value="@i">@town[i].Name</option>
+                                }
+                                else
+                                    towncode = i;
+                                i++;
+                            }
+                            <script>
+                                $("#select-town option:first-child").val('@towncode')
+                            </script>
+                        }
+                    </select>
+                    <hr>
+                </div>
+            </div>
+
+            <div class="row row3">
+                <label for="street">Số nhà, tên đường, khu phố/ấp <span>(*)</span></label><br>
+                <input type="text" name="street" required value="@org.Street"><br>
+                <hr>
+            </div>
+
+            <div class="group_btn">
+                <button class="btn-medium-filled" id="update-profile">Cập nhật</button>
+                <button class="btn-medium-bordered" id="cancel-update-profile">Hủy bỏ</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<br>

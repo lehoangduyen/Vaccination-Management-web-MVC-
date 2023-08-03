@@ -1,0 +1,48 @@
+﻿@{
+    Layout = "_LayoutFeaturePage"; 
+    ViewData["Title"] = "Chứng nhận tiêm chủng";
+}
+@using Covid19_Vaccination_Infogate_MVC.Models
+@using Covid19_Vaccination_Infogate_MVC.Helpers
+@using System.Web;
+@{
+    Citizen citizen = SessionHelper.GetObjectFromJson<Citizen>(Context.Session, "CitizenProfile");
+}
+<link rel="stylesheet" href="/css/CitizenCertificate.css">
+<script src="/js/CitizenCertificate.js"></script>
+
+<div class="holder-function-panel">
+    <!-- MENU -->
+    @{
+        @await Component.InvokeAsync("ViewFunctionMenu");
+    }
+    <!-- END MENU -->
+
+    <div class="function-panel">
+        <br>
+        <div class="panel-target-citizen">
+            <p>Đối tượng: </p>
+            <select name="" id="">
+                <option value="@citizen.Id">@citizen.FullName()</option>
+            </select>
+        </div>
+        <br>
+
+        <div class="panel-certificate">
+            <div class="info">
+                <img src="image/Avata-Ceritificate.png" alt="">
+                <p id="name">@citizen.FullName()</p>
+                <p id="sex_birthday">@citizen.Gender()</p>
+                <p id="birthday">
+                    @citizen.Birthday
+                </p>
+            </div>
+
+            <div class="certificate">
+                <div class="list-injection" id="list-injection">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br>

@@ -1,0 +1,73 @@
+﻿@{
+    Layout = "_LayoutFeaturePage";
+}
+@using Covid19_Vaccination_Infogate_MVC.Models
+@using Covid19_Vaccination_Infogate_MVC.Helpers
+@using System.IO;
+@using Newtonsoft.Json;
+@{
+    Organization org = SessionHelper.GetObjectFromJson<Organization>(Context.Session, "ORGProfile");
+}
+<link rel="stylesheet" href="/css/MOHProvideAccount.css">
+<script src="/js/MOHProvideAccount.js"></script>
+
+<div class="holder-function-panel">
+    <!-- MENU -->
+    @{
+        @await Component.InvokeAsync("ViewFunctionMenu");
+    }
+    <!-- END MENU -->
+    <!-- FUNCTIONAL PANEL -->
+    <div class="function-panel">
+        <div class="provide-panel">
+            <div class="frame">
+                <div class="provide-account">
+                    <p>Tạo tài khoản đơn vị</p>
+                    <label for="city">Tỉnh/Thành phố </label><br>
+                <select name="city" id="select-province">
+                    <option value="">@org.ProvinceName</option>
+                    @{
+                        LocalProvince[] province = null;
+                        LocalDistrict[] district = null;
+                        LocalTown[] town = null;
+                        int provincecode = -1;
+                        int districtcode = -1;
+                        int towncode = -1;
+
+                        using (StreamReader r = new StreamReader(@Url.Content("wwwroot/local.json")))
+                        {
+                            string json = r.ReadToEnd();
+                            province = JsonConvert.DeserializeObject<LocalProvince[]>(json);
+                        }
+                        int i = 0;
+                        for (i = 0; i < 63; i++)
+                            if (province[i].Name != org.ProvinceName)
+                            {
+                                <option value="@i">@province[i].Name</option>
+                                continue;
+                            }
+                            else
+                                provincecode = i;
+                        <script>
+                                    $("#select-province option:first-child").val('@provincecode')
+                        </script>
+                    }
+                </select>
+                    <hr>
+                    <br>
+                    <label for="num">Số lượng tài khoản cần tạo</label><br>
+                    <input type="text" name="num" id="account-quantity" required value=""><br>
+                    <hr>
+                </div>
+            </div>
+        </div>
+
+        <div class="group_btn">
+            <button class="btn-medium-filled" id="btn-confirm-acc-creation">Xác nhận</button>
+            <button class="btn-medium-bordered" id="close_reg_person_profile">Hủy bỏ</button>
+        </div>
+
+    </div>
+</div>
+
+<br>
